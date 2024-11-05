@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -21,12 +22,12 @@ func GetUserByID(db *sql.DB, stmt *sql.Stmt, id string) (string, error) {
 	return name, nil
 }
 
-func GetUserByIDNoPrevent(db *sql.DB, id string) (string, error) {
-	var name string
-	query := "SELECT name FROM users WHERE id = " + id
+func GetUserByIDNoPrevent(db *sql.DB, id string) ([]string, error) {
+	var name []string
+	query := fmt.Sprintf("SELECT name FROM users WHERE id = '%s'", id)
 	err := db.QueryRow(query).Scan(&name)
 	if err != nil {
-		return "", err
+		return []string{}, err
 	}
 	return name, nil
 }

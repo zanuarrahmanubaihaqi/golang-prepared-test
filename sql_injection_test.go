@@ -47,13 +47,12 @@ func TestSQLInjectionNoPrevention(t *testing.T) {
 	}
 
 	// Attempt SQL Injection
-	injectionAttempt := "1 OR 1=1" // Modifikasi untuk tipe INT di SQL
+	injectionAttempt := "' OR '1'='1"
 	name, err := GetUserByIDNoPrevent(db, injectionAttempt)
 
-	// Verifikasi: tidak ada error dan hasil dari SQL Injection
-	assert.NoError(t, err, "Tidak seharusnya ada error dari SQL Injection jika tidak dicegah")
-	assert.NotEqual(t, "Alice", name, "Jika SQL Injection berhasil, maka hasil query seharusnya tidak hanya 'Alice'")
-	assert.NotEmpty(t, name, "SQL Injection seharusnya menghasilkan hasil yang tidak semestinya")
+	// Verifikasi: SQL injection berhasil, seharusnya tidak ada error
+	assert.NoError(t, err, "Expected no error for SQL injection in non-prepared statement")
+	assert.NotEmpty(t, name, "SQL Injection succeeded in non-prepared statement")
 }
 
 func TestSQLInjectionPrevention(t *testing.T) {
